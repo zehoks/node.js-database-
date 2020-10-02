@@ -1,6 +1,6 @@
+//ASSIGNMENT(start)
 let message;
 message = 'Hello!';
-
 let admin;
 let name = 'ДЖОН';
 admin = name;
@@ -28,6 +28,7 @@ console.log(typeof (10n)) ;
 console.log(typeof (Math)) ;
 console.log(typeof (true)) ;
 
+///Type conversion
 let stroka = true;
 console.log(typeof (stroka));
 stroka = 'tak';
@@ -49,6 +50,7 @@ stroka = Number(stroka);
 console.log(typeof(stroka));
 console.log(stroka);
 
+///MATH operation
 console.log("4"*"6");
 console.log("4"/"6");
 console.log("4"-"6");
