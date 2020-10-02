@@ -21,7 +21,7 @@ client
     .then((result) => console.log(result.rows))
     .catch((e) => console.log(e.stack))
     .then(() => client.end())
-// ctrl+k+c
+// // ctrl+k+c
 // ctrl+k+u
 
 // client.query(
