@@ -2,7 +2,7 @@
 require('dotenv').config()
 // подключаем node-postgres, коннектор к базе PG
 const { Client } = require('pg')
-const client = new Client({
+const pgclient = new Client({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
     database: process.env.DB_DATABASE,
@@ -76,7 +76,7 @@ async function createOrder() {
         // а также возвращает указанный атрибут(ы)
         // В данном случае это необходимо
         const resOrderID = await pgclient.query(
-            `INSERT INTO order_ (client_id) VALUES ($1) RETURNING id`,
+            `INSERT INTO order_ (client__id) VALUES ($1) RETURNING id`,
             [order.clientID]
         )
         // resOrderID - это объект, который возвращает pg query
