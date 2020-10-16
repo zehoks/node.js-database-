@@ -165,3 +165,92 @@ console.log([] + 1)
 console.log([1] + 1)
 console.log([1, 2] + 1)
 //Когда бинарный оператор плюс "+" добавляет что-либо к строке, он тоже преобразует это в строку
+
+//несколько записей функции как метода
+let people = {
+    nickname: 'Dasha',
+    resource: 'time',
+    age: 25
+    
+}
+people.hey = function () {
+    console.log('hey '+this.nickname)
+}
+people.hey()
+
+
+function hii() {
+    console.log('hii')
+}
+people.hii = hii
+people.hii()
+
+
+isera = {
+    sayprivet: function () {
+        console.log('privet')
+    }
+}
+isera.sayprivet();
+
+iserka = {
+    bay() {
+        console.log('bay')
+    }
+}
+iserka.bay();
+
+let diman = {
+    age: 22
+}
+let misha = {
+    age:74
+}
+
+function sayage() {
+    console.log('mne '+ this.age)
+}
+
+diman.f = sayage;
+diman.f();
+
+misha.f = sayage;
+misha.f();
+
+//немного ссылочных функций
+//let func = (arg1, arg2, ...argN) => expression
+//обычная функция 
+//let func = function(arg1, arg2, ...argN) {
+//   return expression;
+// };
+
+function sum(a,b) {
+    return a + b;
+}
+console.log(sum(5, 7))
+
+let difference = function (a, b) {
+    return a - b
+};
+console.log(difference(19, 2))
+
+let multiplier = (a, b) => a * b
+console.log(multiplier(3, 5))
+
+let hand = () => console.log('mawet rykoi')
+hand();
+
+let calculator = {
+    read(a,b) {
+    return a,b 
+    },
+    summ(a,b) {
+    return a+b 
+    },
+    mul(a, b) {
+        return a*b
+    }
+};
+console.log(calculator.read(1,2));
+console.log( calculator.summ(5,6) );
+console.log( calculator.mul(4,5) );
