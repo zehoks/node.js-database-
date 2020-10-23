@@ -254,3 +254,37 @@ let calculator = {
 console.log(calculator.read(1,2));
 console.log( calculator.summ(5,6) );
 console.log( calculator.mul(4,5) );
+
+////Функция-конструктор
+function Userp(names) {
+    //this = {} (неявно) 
+    this.names = names
+    this.isAdmin = false
+    //return this (неявно)
+}
+
+let peoplep = new Userp('Vasya')
+//let user = {
+//   name: "Вася",
+//   isAdmin: false
+// };
+
+console.log(peoplep.names)
+console.log(peoplep.isAdmin)
+
+//Возврат значения из конструктора return
+function BigUser() {
+    this.name = 'Gleb'
+    return { name: 'Godzilla' }
+}
+console.log( new BigUser().name )
+
+function SmallUser() {
+    this.name = 'Gleb'
+    return
+}
+console.log(new SmallUser().name)
+//Обычно у конструкторов отсутствует return. В данном блоке мы упомянули особое поведение с возвращаемыми объектами
+
+
+

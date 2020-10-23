@@ -19,7 +19,7 @@ app.route('/user_order/:id').get(async (req, res) => {
         const { id } = req.params
         pgclient = await pool.connect()
         const { rows } = await pgclient.query(`
-        SELECT id,client__id, created_at
+        SELECT id, name, created_at
         FROM order_
         WHERE client__id = $1
         ORDER BY created_at DESC
@@ -61,6 +61,31 @@ app.route('/make_order/:id').get(async (req, res) => {
     } finally {
         await pgclient.release()
     }
+})
+
+app.route('/clients/:id').get(async (req, res) => {
+    let pgclient
+    try {
+        pgclient = await pool.connect()
+        const { id } = req.params
+        const { rows } = await pgclient.query(`
+        SELECT id,client__id, address, phone
+        FROM order_
+        WHERE id = $1
+        ORDER BY id DESC
+        `, [id])
+        res.send(rows)
+        
+    } catch (error) {
+        res.status(500).send({
+            error:err.message
+        })
+        console.error(err)
+    } finally {
+        await pgclient.release()
+    }
+
+
 })
 
 app.listen(8080, () => {
