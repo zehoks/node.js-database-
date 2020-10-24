@@ -19,6 +19,8 @@ CREATE TABLE client_ (
 	name varchar(255) NOT NULL,
 	address varchar(1000) NOT NULL,
 	phone varchar(11) NOT NULL
+	email varchar(255) NOT NULL
+	password varchar(255) NOT NULL
 );
 
 INSERT INTO client_ (name, address, phone) VALUES
@@ -49,3 +51,4 @@ INSERT INTO order_menu (order_id, menu_id, count, price) VALUES
 (2, 1, 2, 30),
 (3, 3, 6, 12),
 (4, 1, 2, 30);
+
