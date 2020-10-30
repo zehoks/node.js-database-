@@ -7,6 +7,15 @@ const bodyParser = require('body-parser')
 const app = express()
 app.use(bodyParser.json())
 
+// TODO API:
+// 1) POST /sign_in - Войти в систему. 
+//    Передаваться будет email, password.
+//    Нужно проверить, что пользователь в таким email и password
+//    существует.
+// 2) GET /menu Получить меню. Без параметров 
+//      (TODO: добавить пагинацию, сортировку и фильтры (поиск по цене, по весу))
+// 3) DELETE /user_order/:id - (id - id заказа)
+
 app.route('/now').get(async(req, res) => {
     const pgclient = await pool.connect()
     //создаст переменную rows и можно будет сразу с ней работать
@@ -41,6 +50,29 @@ app.route('/user_order/:id').get(async (req, res) => {
         console.log('close db connection')
     }
 })
+//
+
+app.route('/menu').get(async (req, res) => {
+    let pgclient = await pool.connect()
+    try {
+        const { id } = req.params
+        pgclient = await pool.connect()
+        const { rows } = await pgclient.query(`
+        SELECT id, name, price
+        FROM menu
+        `, [id])
+        res.send(rows)
+    } catch (error) {
+    res.status(500).send({
+            error:err.message
+        })
+        console.error(err) 
+    } finally {
+        await pgclient.release()
+        console.log('close db connection')
+    }
+})
+///
 //сделать новый заказ
 // Структура body    
 //      {
@@ -49,13 +81,14 @@ app.route('/user_order/:id').get(async (req, res) => {
 //     }
 app.route('/make_order/:id').post(async (req, res) => {
     //todo получать id не параметра, а их токена
+    // TODO: обработать ошибку, когда подключиться не удалось
     let pgclient = await pool.connect() //пропускает всю процедуру, если не будет подключения
     try {
         const { id } = req.params
         //открываем транзакцию
         await pgclient.query('BEGIN')
         //создали заказ и получили ID
-        //rows -дистуриктиризация
+        //rows -деструктуризация
         const { rows } = await pgclient.query(`INSERT INTO order_ (client__id)
         VALUES ($1) RETURNING id
         `, [id])
@@ -168,26 +201,26 @@ app.route('/sign_up').post(async (req, res) => {
         console.error(err)
 } finally {
     await pgclient.release()
-}
-
+    }
+    
 })
 
+app.route('/sign_in').post(async (req, res) => {
 
-app.route('/clients/:id').get(async (req, res) => {
-    let pgclient
+    let pgclient = await pool.connect()
     try {
-        pgclient = await pool.connect()
-        const { id } = req.params
+        const {email,password} = req.body
         const { rows } = await pgclient.query(`
-        SELECT id, name, address, phone
+        SELECT id
         FROM client_
-        WHERE id = $1
-        ORDER BY id DESC
-        `, [id])
-        res.send(rows)
-        
+        WHERE email = ($1) AND password = ($2)    
+        `, [email], [password])
+        res.send({
+            od:rows[0].id
+        })
+
     } catch (error) {
-        res.status(500).send({
+    res.status(500).send({
             error:err.message
         })
         console.error(err)
@@ -196,16 +229,17 @@ app.route('/clients/:id').get(async (req, res) => {
     }
 })
 
-app.route('make_client/:id').get(async (req, res) => {
+app.route('/user_order/:id').post(async (req, res) => {
     let pgclient
     try {
         pgclient = await pool.connect()
         const { id } = req.params
-        const { rows } = await pgclient.query(`INSERT INTO client_ (name, address, phone) VALUES ($1) RETURNING id`, [id])
-        const clientID = rows[0].id
-        res.send({
-            client_id:clientID
-        })
+        const { rows } = await pgclient.query(`DELETE
+        FROM order
+        WHERE id = ($1)
+        RETURNING id`, [id])
+        res.send(rows)
+        
     } catch (error) {
         res.status(500).send({
             error:err.message
