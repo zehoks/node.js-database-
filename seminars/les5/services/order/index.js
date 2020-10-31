@@ -23,8 +23,8 @@ async function findOrderByClientID(id) {
 /**
  * 
  * @param {number} id - ID клиента 
- * @param {Array.<{menu_id:Number,count:Number}>} order 
-
+ * @param {Array.<{menu_id:Number,count:Number}>} order - название
+ * продукта и его количество
  */
 async function makeOrder(id, order) {
 let pgclient = await pool.connect()
