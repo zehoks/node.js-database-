@@ -3,15 +3,18 @@ const express = require('express')
 const pool = require('./config/db')///благодаря exports мы смогли подключиться к настройкам подключения 
 //bodyparser чтобы была возможность парсить body
 const bodyParser = require('body-parser')
+//const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
+const secret = 'jwt_secret_value'
+//Services
+const clientService = require('./services/client')
 
 const app = express()
+// чтобы парсить application/json
 app.use(bodyParser.json())
 
 // TODO API:
-// 1) POST /sign_in - Войти в систему. 
-//    Передаваться будет email, password.
-//    Нужно проверить, что пользователь в таким email и password
-//    существует.
 // 2) GET /menu Получить меню. Без параметров 
 //      (TODO: добавить пагинацию, сортировку и фильтры (поиск по цене, по весу))
 // 3) DELETE /user_order/:id - (id - id заказа)
@@ -25,53 +28,92 @@ app.route('/now').get(async(req, res) => {
     res.send(rows[0].now)
     return
 })
+
+/**
+ * checkAuth валидирует токен,
+ * в случае успеха возвращает payload
+ * @param {*} req
+ */
+async function checkAuth(req){
+    const authHeader = req.headers.Authorization
+
+
+    let token 
+    if (authHeader) {
+        const h = authHeader.split(' ')
+        if (h[0] !== 'Bearer') {
+            throw new Error('Allowed only Bearer token')
+        }
+
+        token = h[1]
+    } else {
+        throw new Error ('Token not found')
+    }
+
+return jwt.verify(token,secret)
+
+}
+
+
 //все заказы конкретного пользователя
-app.route('/user_order/:id').get(async (req, res) => {
-    let pgclient
-    try { 
-        //значение из URL
-        const { id } = req.params
-        pgclient = await pool.connect()
-        const { rows } = await pgclient.query(`
-        SELECT id, name, created_at
-        FROM order_
-        WHERE client__id = $1
-        ORDER BY created_at DESC
-    `, [id])
-    
-        res.send(rows)
+//id пользователя берется из токена
+app.route('/user_order').get(async (req, res) => {
+    let tokenPaylod
+    try {
+    tokenPaylod = await checkAuth(req)
     } catch (err) {
-        res.status(500).send({
-            error:err.message
-        })
-        console.error(err)
+        res.status(401).send({
+        error: err.message
+    })
+        return
+    }
+
+    let pgclient
+    try {
+    // значение из URL
+    pgclient = await pool.connect()
+    const { rows } = await pgclient.query(`
+        SELECT id, client_id, created_at
+        FROM order_
+        WHERE client_id = $1
+        ORDER BY created_at DESC
+        `, [tokenPaylod.id])
+
+    res.send(rows)
+    } catch (err) {
+    res.status(500).send({
+    error: err.message
+    })
+    console.error(err)
     } finally {
-        await pgclient.release()
-        console.log('close db connection')
+    // Не забываем всегда закрывать соединение с базой
+    await pgclient.release()
     }
 })
 //
 
-app.route('/menu').get(async (req, res) => {
-    let pgclient = await pool.connect()
-    try {
-        const { id } = req.params
-        pgclient = await pool.connect()
-        const { rows } = await pgclient.query(`
-        SELECT id, name, price
-        FROM menu
-        `, [id])
-        res.send(rows)
-    } catch (error) {
-    res.status(500).send({
-            error:err.message
-        })
-        console.error(err) 
-    } finally {
-        await pgclient.release()
-        console.log('close db connection')
-    }
-})
+// app.route('/menu').get(async (req, res) => {
+//     let pgclient = await pool.connect()
+//     try {
+//         const { id } = req.params
+//         pgclient = await pool.connect()
+//         const { rows } = await pgclient.query(`
+//         SELECT id, name, price
+//         FROM menu
+//         `, [id])
+//         res.send(rows)
+//     } catch (error) {
+//     res.status(500).send({
+//             error:err.message
+//         })
+//         console.error(err) 
+//     } finally {
+//         await pgclient.release()
+//         console.log('close db connection')
+//     }
+// })
+
+
 ///
 //сделать новый заказ
 // Структура body    
@@ -185,51 +227,52 @@ app.route('/sign_up').post(async (req, res) => {
         email,
         password } = req.body
     
-    let pgclient = await pool.connect()
-    try {
-    const {rows} =  await pgclient.query(`
-    INSERT INTO client_ (name,address,phone,email,password VALUES ($1,$2,$3,$4) RETURNING id; )
-        `, [name,address,phone,email,password])
     
-        res.send({
-            od:rows[0].id
+    try {
+        const token = await clientService.signUp({
+            name,
+            address,
+            password,
+            phone,
+            email
+
         })
-} catch (error) {
+        res.send({
+            id: token
+        })
+} catch (err) {
     res.status(500).send({
-            error:err.message
+            error: err.message
         })
         console.error(err)
-} finally {
-    await pgclient.release()
-    }
+} 
     
 })
 
 app.route('/sign_in').post(async (req, res) => {
 
-    let pgclient = await pool.connect()
+    const {
+        email,
+        password
+    } = req.body
     try {
-        const {email,password} = req.body
-        const { rows } = await pgclient.query(`
-        SELECT id
-        FROM client_
-        WHERE email = ($1) AND password = ($2)    
-        `, [email], [password])
+        const token = await clientService.signIn(email, password
+        )
+        
         res.send({
-            od:rows[0].id
-        })
+                token
+            })
+        
 
-    } catch (error) {
-    res.status(500).send({
-            error:err.message
-        })
-        console.error(err)
-    } finally {
-        await pgclient.release()
+    } catch (err) {
+        res.status(500).send({
+    error: err.message
+    }) 
     }
+
 })
 
-app.route('/user_order/:id').post(async (req, res) => {
+app.route('/user_order/:id').delete(async (req, res) => {
     let pgclient
     try {
         pgclient = await pool.connect()
@@ -240,7 +283,7 @@ app.route('/user_order/:id').post(async (req, res) => {
         RETURNING id`, [id])
         res.send(rows)
         
-    } catch (error) {
+    } catch (err) {
         res.status(500).send({
             error:err.message
         })
@@ -250,7 +293,7 @@ app.route('/user_order/:id').post(async (req, res) => {
     }
 })
 
-app.listen(8080, () => {
+app.listen(8681, () => {
     console.log('Server started!!!!! on http://localhost:8080')
 })
 
