@@ -1,5 +1,5 @@
 const pool = require('../../config/db')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const secret = 'jwt_secret_value'
@@ -61,7 +61,7 @@ async function signIn(email, password) {
         // проверяем правильность пароля 
         const isValid = await  bcrypt.compare(password, rows[0].password)
         if (!isValid) {
-            throw new Error('User not found')
+            throw new Error('User not found or isvalid password')
         }
          // если правильность введённых данных пользователем
         // подтверждена

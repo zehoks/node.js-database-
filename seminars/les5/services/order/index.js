@@ -14,10 +14,22 @@ async function findOrderByClientID(id) {
         ORDER BY created_at DESC
         
     `, [id])
-
     return rows
+}
 
-
+/**
+ * deleteOrderByClientID удаляет заказ 
+ * @param {number} id 
+ */
+async function deleteOrderByClientID(id) {
+    
+    const {rows} =  await pool.query(`
+    DELETE
+        FROM order_
+        WHERE id = ($1)
+        RETURNING id
+    `, [id])
+    return rows
 }
 
 /**
@@ -137,5 +149,6 @@ try {
 
 module.exports = {
     findOrderByClientID,
+    deleteOrderByClientID,
     makeOrder
 }

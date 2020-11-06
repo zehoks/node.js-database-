@@ -104,6 +104,20 @@ try {
     }
 })
 
+app.route('/user_order/:id').delete(async (req, res) => {
+    let pgclient
+    try {
+    const deleteOrderId = await orderService.deleteOrderByClientID(req.client_.id)
+    res.send(deleteOrderId) 
+    } catch (err) {
+        res.status(500).send({
+            error:err.message
+        })
+        console.error(err)
+    } finally {
+        await pgclient.release()
+    }
+})
 app.listen(8080, () => {
     console.log('Server started on http://localhost:8080')
 })
