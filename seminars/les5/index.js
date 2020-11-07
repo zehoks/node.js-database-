@@ -4,6 +4,9 @@ const express = require('express')
 // body parser, чтобы была возможность парсить body
 const bodyParser = require('body-parser')
 
+//allow cors
+var cors = require('cors')
+
 // Middleware
 const authMiddleware = require('./midleware/auth')
 
@@ -15,6 +18,7 @@ const orderService = require('./services/order')
 const app = express()
 // чтобы парсить application/json
 app.use(bodyParser.json())
+app.use(cors())
 
 // TODO API (д):
 // 1) По id заказа order_menu возвращать состав заказа (с названием продуктов)
@@ -118,8 +122,8 @@ app.route('/user_order/:id').delete(async (req, res) => {
         await pgclient.release()
     }
 })
-app.listen(8080, () => {
-    console.log('Server started on http://localhost:8080')
+app.listen(80, () => {
+    console.log('Server started on http://localhost:80')
 })
 
 //если мы "открываем" запрос к api, то нужно прописать и его "закрытие", 

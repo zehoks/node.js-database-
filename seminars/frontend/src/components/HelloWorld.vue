@@ -16,11 +16,10 @@
         </h1>
 
         <p class="subheading font-weight-regular">
-          For help and collaboration with other Vuetify developers,
-          <br />please join our online
-          <a href="https://community.vuetifyjs.com" target="_blank"
-            >Discord Community</a
-          >
+          <router-link to="/about">Go to about page</router-link>
+        </p>
+        <p class="subheading font-weight-regular">
+          <router-link to="/menu">Go to menu page</router-link>
         </p>
       </v-col>
 
@@ -29,17 +28,46 @@
           What's next?
         </h2>
 
-        <v-row justify="center">
-          <a
-            v-for="(next, i) in whatsNext"
-            :key="i"
-            :href="next.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ next.text }}
-          </a>
-        </v-row>
+        <template>
+  <div class="text-center">
+      <v-rating
+        v-model="rating"
+        background-color="purple lighten-3"
+        color="purple"
+        large
+      ></v-rating>
+      <v-rating
+        v-model="rating"
+        background-color="pink lighten-3"
+        color="pink"
+        large
+      ></v-rating>
+      <v-rating
+        v-model="rating"
+        background-color="orange lighten-3"
+        color="orange"
+        large
+      ></v-rating>
+      <v-rating
+        v-model="rating"
+        background-color="green lighten-3"
+        color="green"
+        large
+      ></v-rating>
+      <v-rating
+        v-model="rating"
+        background-color="red lighten-3"
+        color="red"
+        large
+      ></v-rating>
+      <v-rating
+        v-model="rating"
+        background-color="indigo lighten-3"
+        color="indigo"
+        large
+      ></v-rating>
+  </div>
+</template>
       </v-col>
 
       <v-col class="mb-5" cols="12">
