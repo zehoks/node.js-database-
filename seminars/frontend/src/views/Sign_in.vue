@@ -1,67 +1,68 @@
 <template>
-  <v-form
+<v-form
     ref="form"
     v-model="valid"
     lazy-validation
-  >
+>
 
     <v-text-field
-      v-model="email"
-      :rules="emailRules"
-      label="Почта"
-      required
+    v-model="email"
+    :rules="emailRules"
+    label="Почта"
+    required
     ></v-text-field>
 
 
     <v-text-field
-      v-model="password"
-      :rules="passwordRules"
-      label="Пароль"
-      required
+    v-model="password"
+    :rules="passwordRules"
+    label="Пароль"
+    required
     ></v-text-field>
-   
 
-    <v-btn
-      :disabled="!valid"
-      color="success"
-      class="mr-4"
-      @click="validate"
-    >
-      <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">
-      Войти
-    </v-btn>
-    </v-btn>
 
-   
-  </v-form>
+    <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">
+    Войти
+    </v-btn>
+    
+
+
+</v-form>
 </template>
 
 <script>
-  export default {
+export default {
     data: () => ({
-      valid: true,
-      email: '',
-      emailRules: [
+    valid: true,
+    email: '',
+    emailRules: [
         v => !!v || 'E-mail is required'
-      ],
-      password: '',
-      passwordRules: [
+    ],
+    password: '',
+    passwordRules: [
         v => !!v || 'пароль обязателен',
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-       
-      ],
+    
+    ],
     }),
 
     methods: {
-      sign_In () {
+    async sign_In () {
           //запускаем валидацию формы
         if(!this.$refs.form.validate()){
             return
         }
-    console.log("send signIn request")
+    try {
+        await this.$store.dispath('auth/signIn', {
+            email:this.email,
+            password:this.password
+        })
+    } catch (err) {
+        this.snackbar = true
+    } 
 
-      },
-     
     },
-  }
+    
+    },
+}
 </script>
