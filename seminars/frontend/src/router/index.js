@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Menu from '../views/Menu.vue'
 import Sign_in from '../views/Sign_in.vue'
+import UserOrder from '../views/UserOrder.vue'
 
 Vue.use(VueRouter)
 
@@ -30,6 +31,11 @@ const routes = [
     path: '/sign_in',
     name: '/Sign_in',
     component:Sign_in,
+  },
+  {
+    path: '/user_order',
+    name: 'UserOrder',
+    component: UserOrder,
   },
 ]
 

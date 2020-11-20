@@ -1,10 +1,5 @@
 <template>
-<v-data-table
-    :headers="headers"
-    :items="menu"
-    :items-per-page="5"
-    class="elevation-1"
->
+<v-data-table :headers="headers" :items="menu" :items-per-page="5" class="elevation-1">
     <template v-slot:[`item.created_at`]="{ item }">
     {{ item.created_at | formatDate }}
     </template>
@@ -15,7 +10,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+
 
 export default {
 data() {
@@ -39,7 +34,7 @@ async created() {
 
 methods: {
     async init() {
-    const res = await axios.get('http://localhost:80/menu')
+    const res = await this.$axios.get('/menu')
     this.menu = res.data
     console.log('we are in init function')
     },

@@ -1,5 +1,5 @@
 import axios from 'asios';
-
+import jwtDecode from 'jwt-decode'
 
 // initial state
 const state = () => ({
@@ -15,9 +15,15 @@ const getters = {}
 const actions = {
     async signIn({ commit }, credentials) {
     // запрос к /sign_in API
-        const resp = await axios.post('http://localhost:80/sign_in', credentials)
-            commit('setUser', res.data[0])
-        } , 
+        const resp = await axios.post('/Sign_in', credentials)
+        const token = resp.data.token
+    // добавлю к axios header по умолчанию
+    // чтобы все запросы к бэку отправлялись с токеном
+    this._vm.$axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+
+    const user = jwtDecode(token)
+    commit('setUser', user)
+    }, 
         
     // shop.getProducts(products => {
     //   commit('setProducts', products)
