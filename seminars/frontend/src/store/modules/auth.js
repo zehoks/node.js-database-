@@ -1,7 +1,5 @@
-import axios from 'asios'
-import jwtDecode from 'jwt-decode'
-
 // initial state
+import jwtDecode from 'jwt-decode'
 const state = () => ({
   user: {},
   is_auth: false,
@@ -13,8 +11,7 @@ const getters = {}
 // actions
 const actions = {
   async signIn({ commit }, credentials) {
-    // запрос к /sign_in API
-    const resp = await axios.post('/Sign_in', credentials)
+    const resp = await this._vm.$axios.post('/sign_in', credentials)
     const token = resp.data.token
     // добавлю к axios header по умолчанию
     // чтобы все запросы к бэку отправлялись с токеном
@@ -23,10 +20,6 @@ const actions = {
     const user = jwtDecode(token)
     commit('setUser', user)
   },
-
-  // shop.getProducts(products => {
-  //   commit('setProducts', products)
-  // })
 }
 
 // mutations
