@@ -1,44 +1,36 @@
 <template>
-<v-form
-    ref="form"
-    v-model="valid"
-    lazy-validation
->
-
+  <v-form ref="form" v-model="valid" lazy-validation>
     <v-text-field v-model="email" :rules="emailRules" label="Почта" required></v-text-field>
 
     <v-text-field
-    v-model="password"
-    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-    :rules="passwordRules"
-    :type="showPassword ? 'text' : 'password'"
-    name="input-10-1"
-    label="Пароль"
-    counter
-    @click:append="showPassword = !showPassword"
-    required
+      v-model="password"
+      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+      :rules="passwordRules"
+      :type="showPassword ? 'text' : 'password'"
+      name="input-10-1"
+      label="Пароль"
+      counter
+      @click:append="showPassword = !showPassword"
+      required
     ></v-text-field>
 
-
     <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">
-    Войти
+      Войти
     </v-btn>
     <v-snackbar v-model="snackbar" color="red" :timeout="5 * 1000">
-    {{ text }}
-    <template v-slot:action="{ attrs }">
+      {{ text }}
+      <template v-slot:action="{ attrs }">
         <v-btn color="black" text v-bind="attrs" @click="snackbar = false">
-        Закрыть
+          Закрыть
         </v-btn>
-    </template>
+      </template>
     </v-snackbar>
-
-
-</v-form>
+  </v-form>
 </template>
 
 <script>
 export default {
-    data: () => ({
+  data: () => ({
     valid: true,
     email: '',
     emailRules: [v => !!v || 'E-mail обязателен', v => /.+@.+\..+/.test(v) || 'Введите почту'],
@@ -48,27 +40,25 @@ export default {
     // snackbar
     snackbar: false,
     text: 'Неправильный логин или пароль',
-    }),
+  }),
 
-    methods: {
-    async sign_In () {
-          //запускаем валидацию формы
-        if(!this.$refs.form.validate()){
-            return
-        }
-    try {
+  methods: {
+    async sign_In() {
+      //запускаем валидацию формы
+      if (!this.$refs.form.validate()) {
+        return
+      }
+      try {
         await this.$store.dispath('auth/signIn', {
-            email:this.email,
-            password:this.password
+          email: this.email,
+          password: this.password,
         })
         // редирект на страницу меню
         this.$router.push({ name: 'UserOrder' })
-    } catch (err) {
+      } catch (err) {
         this.snackbar = true
-    } 
-
+      }
     },
-    
-    },
+  },
 }
 </script>

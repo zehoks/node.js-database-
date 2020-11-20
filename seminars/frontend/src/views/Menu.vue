@@ -1,22 +1,20 @@
 <template>
-<v-data-table :headers="headers" :items="menu" :items-per-page="5" class="elevation-1">
+  <v-data-table :headers="headers" :items="menu" :items-per-page="5" class="elevation-1">
     <template v-slot:[`item.created_at`]="{ item }">
-    {{ item.created_at | formatDate }}
+      {{ item.created_at | formatDate }}
     </template>
     <template v-slot:[`item.updated_at`]="{ item }">
-    {{ item.updated_at | formatDate }}
+      {{ item.updated_at | formatDate }}
     </template>
-</v-data-table>
+  </v-data-table>
 </template>
 
 <script>
-
-
 export default {
-data() {
+  data() {
     return {
-    menu: [],
-    headers: [
+      menu: [],
+      headers: [
         { text: 'ID', value: 'id' },
         { text: 'Название', value: 'name' },
         { text: 'Цена', value: 'price' },
@@ -24,20 +22,20 @@ data() {
         { text: 'Вес', value: 'weight' },
         { text: 'Создано', value: 'created_at' },
         { text: 'Изменено', value: 'updated_at' },
-    ],
+      ],
     }
-},
+  },
 
-async created() {
+  async created() {
     this.init()
-},
+  },
 
-methods: {
+  methods: {
     async init() {
-    const res = await this.$axios.get('/menu')
-    this.menu = res.data
-    console.log('we are in init function')
+      const res = await this.$axios.get('/menu')
+      this.menu = res.data
+      console.log('we are in init function')
     },
-},
+  },
 }
 </script>

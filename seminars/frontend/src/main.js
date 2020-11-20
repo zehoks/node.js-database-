@@ -17,7 +17,6 @@ Vue.filter('formatDate', function(value) {
   }
 })
 
-
 // добавляем глобальный объект axios
 Vue.prototype.$axios = axios
 
@@ -26,4 +25,4 @@ new Vue({
   vuetify,
   store,
   render: h => h(App),
-      }).$mount('#app')
+}).$mount('#app')
