@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Menu from '../views/Menu.vue'
 import Sign_in from '../views/Sign_in.vue'
 import UserOrder from '../views/UserOrder.vue'
+import store from '../store'
 
 Vue.use(VueRouter)
 
@@ -30,6 +31,9 @@ const routes = [
     path: '/sign_in',
     name: '/Sign_in',
     component: Sign_in,
+    meta: {
+      authRequired : false
+    }
   },
   {
     path: '/user_order',
@@ -42,6 +46,32 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.noAuth) {
+
+    if (!to.meta.authRequired) {
+    
+    next()
+    return
+    }
+  }
+
+  
+  
+  const token = localStorage.getItem('token')
+  if (token) {
+    store.dispatch('auth/setAuth', token)
+    if (to.name == 'Sign_In') {
+      next({ name: 'Home' })
+      
+    } else {
+      next()
+    } 
+  } else {
+    next({name: 'Sign_in'})
+  }
 })
 
 export default router

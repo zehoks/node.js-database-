@@ -14,7 +14,7 @@
       required
     ></v-text-field>
 
-    <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">
+    <v-btn :disabled="!valid" color="success" class="mr-4" @click="sign_In">
       Войти
     </v-btn>
     <v-snackbar v-model="snackbar" color="red" :timeout="5 * 1000">
@@ -49,13 +49,14 @@ export default {
         return
       }
       try {
-        await this.$store.dispath('auth/signIn', {
+        await this.$store.dispatch('auth/signIn', {
           email: this.email,
           password: this.password,
         })
         // редирект на страницу меню
         this.$router.push({ name: 'UserOrder' })
       } catch (err) {
+        console.error(err)
         this.snackbar = true
       }
     },

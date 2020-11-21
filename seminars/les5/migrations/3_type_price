@@ -1,0 +1,15 @@
+Select*
+FROM menu WHERE price < 10
+
+
+BEGIN;
+
+ALTER TABLE menu 
+    ALTER COLUMN price Type numeric(8,2);
+
+COMMIT;
+
+--down
+
+Alter table menu
+ALTER COLUM price TYPE money;

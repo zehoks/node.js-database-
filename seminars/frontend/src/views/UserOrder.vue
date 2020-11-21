@@ -23,6 +23,15 @@ export default {
   },
   methods: {
     async init() {
+
+      const token = localStorage.getItem('token')
+      if(!token) {
+        
+        this.$router.push({name:'Sign_in'})
+        return
+      }
+      this._vm.$axios.defaults.headers.common['Authorization'] = token
+      
       const res = await this.$axios.get('/user_order')
       this.order = res.data
     },
