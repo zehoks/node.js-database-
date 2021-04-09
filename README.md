@@ -1,3 +1,2 @@
 # node.js-database-
-
-Семинары js
+Лекции js
